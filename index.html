@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MCP100 Course Material</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Course materials and tutorials for MCP100.">
+    <meta name="author" content="Monil">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
+
+    
+    <style>
+    body {
+        background-image: url('https://imgs.search.brave.com/KtDO2B7GVofNI1pTk7NGPAlMNy2N3tswq_s--aT5xyk/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jZG4u/d2FsbHBhcGVyc2Fm/YXJpLmNvbS80OC82/MC8zcmZKQTUuanBn');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        margin: 0;
+        padding: 0;
+        font-family: 'Roboto', Arial, sans-serif;
+        color: white;
+    }
+
+    h1, h2 {
+        text-align: center;
+        margin: 20px 0;
+    }
+
+    h1 {
+        font-size: 3em;
+        color: #FFD700;
+        text-shadow: 3px 3px 5px rgba(0, 0, 0, 0.7), 0 0 20px #FF4500;
+        animation: glow 1.5s infinite alternate;
+        background: linear-gradient(90deg, #FF6347, #FFD700, #32CD32);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    h2 {
+        font-size: 2em;
+    }
+
+    .dropdown {
+        margin: 20px auto;
+        background-color: rgba(255, 255, 255, 0.9);
+        color: #333;
+        border-radius: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+        transition: margin-bottom 0.3s ease;
+        width: 90%; /* Adjust width for smaller screens */
+        max-width: 800px; /* Limit the maximum width */
+    }
+
+    .dropdown-header {
+        padding: 12px 20px;
+        font-size: 1.2em;
+        font-weight: bold;
+        background-color: #62a4e9;
+        color: white;
+        cursor: pointer;
+        text-align: center;
+        border-radius: 10px;
+        transition: background-color 0.3s, transform 0.2s;
+    }
+
+    .dropdown-header:hover {
+        background-color: #0056b3;
+        transform: scale(1.05);
+    }
+
+    .dropdown-content {
+        max-height: 0;
+        overflow: hidden;
+        background-color: rgba(26, 86, 135, 0.8);
+        transition: max-height 0.5s ease;
+    }
+
+    .dropdown-content.open {
+        max-height: 500px;
+        overflow-y: auto;
+    }
+
+    .dropdown-content a {
+        display: block;
+        padding: 10px;
+        color: white;
+        text-decoration: none;
+        text-align: center;
+        background-color: #0a5068;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .dropdown-content a:hover {
+        background-color: #0056b3;
+    }
+
+    .dropdown-content::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .dropdown-content::-webkit-scrollbar-thumb {
+        background-color: #62a4e9;
+        border-radius: 10px;
+    }
+
+    footer {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 14px;
+    }
+
+    /* Media Queries for Responsiveness */
+    @media (max-width: 768px) {
+        .dropdown-header {
+            font-size: 1em; /* Reduce font size for smaller screens */
+        }
+
+        .dropdown-content a {
+            font-size: 0.9em; /* Reduce link size for smaller screens */
+            padding: 8px; /* Reduce padding for smaller screens */
+        }
+
+        h1 {
+            font-size: 2em; /* Adjust heading size for smaller screens */
+        }
+
+        h2 {
+            font-size: 1.5em; /* Adjust subheading size for smaller screens */
+        }
+    }
+</style>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const outerDropdowns = document.querySelectorAll('.dropdown.outer');
+
+            outerDropdowns.forEach(outer => {
+                const outerHeader = outer.querySelector('.dropdown-header');
+                const outerContent = outer.querySelector('.dropdown-content');
+
+                outerHeader.addEventListener('click', (event) => {
+                    event.stopPropagation();
+                    const isOpen = outerContent.classList.contains('open');
+                    closeAllDropdowns();
+                    if (!isOpen) {
+                        outerContent.classList.add('open');
+                    }
+                });
+
+                const innerDropdowns = outer.querySelectorAll('.dropdown.inner');
+                innerDropdowns.forEach(inner => {
+                    const innerHeader = inner.querySelector('.dropdown-header');
+                    const innerContent = inner.querySelector('.dropdown-content');
+
+                    innerHeader.addEventListener('click', (event) => {
+                        event.stopPropagation();
+                        const isOpen = innerContent.classList.contains('open');
+                        closeInnerDropdowns(outer);
+                        if (!isOpen) {
+                            innerContent.classList.add('open');
+                        }
+                    });
+
+                    const innerMostDropdowns = inner.querySelectorAll('.dropdown.inner-most');
+                    innerMostDropdowns.forEach(innerMost => {
+                        const innerMostHeader = innerMost.querySelector('.dropdown-header');
+                        const innerMostContent = innerMost.querySelector('.dropdown-content');
+
+                        innerMostHeader.addEventListener('click', (event) => {
+                            event.stopPropagation();
+                            const isOpen = innerMostContent.classList.contains('open');
+                            closeInnerMostDropdowns(inner);
+                            if (!isOpen) {
+                                innerMostContent.classList.add('open');
+                            }
+                        });
+                    });
+                });
+            });
+
+            function closeAllDropdowns() {
+                document.querySelectorAll('.dropdown-content').forEach(content => {
+                    content.classList.remove('open');
+                });
+            }
+
+            function closeInnerDropdowns(outer) {
+                outer.querySelectorAll('.dropdown.inner .dropdown-content').forEach(content => {
+                    content.classList.remove('open');
+                });
+            }
+
+            function closeInnerMostDropdowns(inner) {
+                inner.querySelectorAll('.dropdown.inner-most .dropdown-content').forEach(content => {
+                    content.classList.remove('open');
+                });
+            }
+
+            document.addEventListener('click', () => {
+                closeAllDropdowns();
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1><a href="https://dalla111.github.io/homepage/" ><img src="https://jwalamukhi.iitd.ac.in/images/Jwala_logo_extra_small_2.png" alt="Logo" ></a>MCP101 Course Material</h1>
+    <div class="container">
+        <div class="section">
+            <div class="dropdown outer">
+                <div class="dropdown-header">SEM-1 | LECTURES</div>
+                <div class="dropdown-content">
+                    <a href="https://drive.google.com/file/d/1Xbvj2iZMJ8oxA9spBv5Nr-rtJOhBz2gB/view?usp=drive_link">1_Introduction_July24</a>
+                    <a href="https://drive.google.com/file/d/1sINEj3lW2DamjSkrG9ilTsurPlZXyLYI/view?usp=drive_link">1b_orthographic_July24</a>
+                    <a href="https://drive.google.com/file/d/1DhHVd5_1-7mC03bJGiaTdw_Au1fjPn91/view?usp=drive_link">2 Rotation method</a>
+                    <a href="https://drive.google.com/file/d/1faB2ak8HtFxs42qq4VBNbeu0-VdFVyE3/view?usp=drive_link">3_True_length_Aux_method_true_shape</a>
+                    <a href="https://drive.google.com/file/d/1taf1fLEkVzzb1A3T27Vcm3Zr5F4QfUgV/view?usp=drive_link">4_Solids - Auxiliary view_rotation_July24</a>
+                    <a href="https://drive.google.com/file/d/1YshonU7XC3XdLS9GGgQSxNpaGvYI_bZD/view?usp=drive_link">5_Development_Section_Assebmly_July24</a>
+                    <a href="https://drive.google.com/file/d/1XXzkwoYvJUT2O1-4pkbW1tOTGq6v0TNU/view?usp=drive_link">Week 3</a>
+
+                    
+                        
+                    
+                    
+                   
+                </div>
+                      
+            </div>        
+            <div class="dropdown outer">
+                <div class="dropdown-header">MCP BY TANYA GOYAL</div>
+                <div class="dropdown-content">
+                    <div class="dropdown inner">
+                        <div class="dropdown-header">LABS</div>
+                        <div class="dropdown-content">
+                            <a href="https://drive.google.com/drive/folders/1FD_pBFGRTADdRGWLTF_4zehimK24cMLA?usp=drive_link">Lab1</a>
+                            <a href="https://drive.google.com/drive/folders/183P5bwigO-kwVkxe90fwRES6i138DrCU?usp=drive_link">Lab2</a>
+                            <a href="https://drive.google.com/drive/folders/1RQoO-M7CKa413-JCMSogeDqEc_9ItsKf?usp=drive_link">Lab3</a>
+                            <a href="https://drive.google.com/drive/folders/1aGgfpQWiM_-dt2bdHqRKpVW41XgJEzGF?usp=drive_link">Lab4</a>
+                            <a href="https://drive.google.com/drive/folders/1rThVl5igyxRX9r3ropnkNIGquCM4nZIz?usp=drive_link">Lab5</a>
+                            <a href="https://drive.google.com/drive/folders/10T6LTMVUgeX25JDw2BK6D6ZDB--ilAZu?usp=drive_link">Lab6</a>
+                            <a href="https://drive.google.com/drive/folders/1bmQ5oVrGIblPjFnRAY79zuo6e38OBa6O?usp=drive_link">Lab7</a>
+                            <a href="https://drive.google.com/drive/folders/13FEkluutdOFLbhTX1HKe4Ba5MbYPDZVI?usp=drive_link">Lab8</a>
+                            <a href="https://drive.google.com/drive/folders/1kCFzApD-Jge6zMOygkXl1hkHxIgRgHID?usp=drive_link">Lab9</a>
+                            <a href="https://drive.google.com/drive/folders/1egZYzLzj2E4Whf95Sgraq2NkncAaOula?usp=drive_link">Lab10</a>
+                            <a href="https://drive.google.com/drive/folders/1J_fzG1lWjj7sI6oAJlcf4FL7aqSoU6Iy?usp=drive_link">Lab11</a>
+                            
+                            <a href="https://drive.google.com/drive/folders/1hG9vwXlmZ26x2_3O1ciEfm9Cdu81jRah?usp=drive_link">PRACTICE [SOFTWARE]</a>
+                            </div>
+                            </div>
+                        <div class="dropdown inner">
+                        <div class="dropdown-header">EXAMS</div>
+                        <div class="dropdown-content">
+                            <a href="https://drive.google.com/file/d/1GvsBZxyU_e8rbTusRta6b57T-bkT1VTU/view?usp=drive_link">Practice 2.pdf</a>
+                            <a href="https://drive.google.com/file/d/1lTRfjrhA00-tQMBhcGdFGIe2uxxVo2O_/view?usp=drive_link">Practice 3.pdf</a>
+                            <a href="https://drive.google.com/file/d/13yg-CkqL7wT4r30hh_qbunrsFUkofeg1/view?usp=drive_link">Practice 1.pdf</a>
+                            <a href="https://drive.google.com/file/d/1fTA9RmziLwZz3vthtTgGQTHaBM43li_U/view?usp=drive_link">Reminor Question 2.pdf</a>
+                            <a href="https://drive.google.com/file/d/1Q-Qwkw-qz4ZudRXZYQqc7ouHddPXysPA/view?usp=drive_link">Reminor_Question 1.pdf</a>
+                            <a href="https://drive.google.com/drive/folders/1lBqZP9er9ICeMDrGu0R1VEDKODKQzFCk?usp=drive_link">Major</a>
+                            <a href="https://drive.google.com/drive/folders/10muFwlKm8ALvtLlnud1bgrJjPYo-HLcQ?usp=drive_link">Minor</a>
+                        </div>
+                        </div>
+
+
+                    
+                    
+                </div>
+            </div>
+            <div class="dropdown outer">
+                <div class="dropdown-header">SEM-2 | QUIZES(2020-2021)</div>
+                <div class="dropdown-content">
+                    <a href="https://drive.google.com/file/d/17cYWhMm5F8Ls3_w8ZS5aoQi1fJFv7JsK/view?usp=drive_link">Make-Up Quiz</a>
+                    <a href="https://drive.google.com/file/d/1l8ppc8FUxIMwIZiDDBgpWHo0Bwr6etfi/view?usp=drive_link">Quiz 1</a>
+                    <a href="https://drive.google.com/file/d/1J_wZJhGenOQp9ZMg_xXNMNflZPsjrrzv/view?usp=drive_link">Quiz 2</a>
+                    <a href="https://drive.google.com/file/d/1tA7aITplRfU2-bhknOoUs9G1QfrnCuxZ/view?usp=drive_link">Quiz 3</a>
+                    <a href="https://drive.google.com/file/d/1IzL2YPCPceyyVCM4Fk3gQN_wQEZe_5fZ/view?usp=drive_link">Quiz 4</a>
+                    <a href="https://drive.google.com/file/d/1MgMEUqJ8vCjI1BS9pYfVPPiMNN8GS6n1/view?usp=drive_link">Quiz 5</a>
+
+                   
+                </div>
+            </div>
+            <div class="dropdown outer">
+                <div class="dropdown-header">SEM-2 | EXAM(2020-2021)</div>
+                <div class="dropdown-content">
+                    <a href="https://drive.google.com/file/d/13wrMaPlOAO27VQciuv1qB6gXPEgYZgUG/view?usp=drive_link">Major Manual Drawing</a>
+                    <a href="https://drive.google.com/file/d/1CV3X_PnqeQ6w9h1VmUhJmOSodT-4I8Kl/view?usp=drive_link">Major Software Based</a>
+                    <a href="https://drive.google.com/file/d/1HcfKiUyrs9fjwjN-WKnjPdZM1ekfdk9e/view?usp=drive_link">Minor</a>
+                    <a href="https://drive.google.com/file/d/1mUki7ezM2ql_Kg1yrBXxN1QJCc5jXYfI/view?usp=drive_link">Re-Major Manual Drawing</a>
+                    <a href="https://drive.google.com/file/d/1IDX88Y4qID2hu1BfKTl9zfqL-I7AH4Cd/view?usp=drive_link">Remajor Software Based</a>
+                    <a href="https://drive.google.com/file/d/1w9sLjIerwvHV9GE7cVccaBmIf2LKh2l4/view?usp=drive_link">Reminor</a>
+
+
+
+                </div>
+            </div>
+            <div class="dropdown outer">
+                <div class="dropdown-header">EXAM 2021|2022</div>
+                <div class="dropdown-content">
+                    <a href="https://drive.google.com/file/d/1jSDlOlPezVNX6AwGNdU4BFJKZo4jD1Dh/view?usp=drive_link">Major Exam Paper 2021-2022</a>
+                    <a href="https://drive.google.com/file/d/1uRGcV4QoJnvMVFeOaesHq-jBIiHDIrPp/view?usp=drive_link">Question 1 Minor</a>
+                    <a href="https://drive.google.com/file/d/1dC_JbwxZRQQ-l2iVhDpiiZT_3L5gt2Fe/view?usp=drive_link">Question 2 Minor</a>
+                    <a href="https://drive.google.com/file/d/1nGHKjZjRVYs9X5Bf9zMZTEnnvL-goPh5/view?usp=drive_link">Quiz 1 Submission</a>
+                    <a href="https://drive.google.com/file/d/1woDwdGfJMyouFBBZaP8D6fCC6JJVpJEL/view?usp=drive_link">Quiz 1</a>
+                    <a href="https://drive.google.com/file/d/1W5LfVXnnCCNP_xc1LG47dcfTXZ_x5SIR/view?usp=drive_link">Quiz 2 Submission</a>
+                    <a href="https://drive.google.com/file/d/1XJ5-orHMR511aAw2o1AFFu2bYPmEjOqU/view?usp=drive_link">Quiz 2</a>
+                    <a href="https://drive.google.com/file/d/1TFiis6cv19jlPwq5Jfx5Wq0czTMbNxHR/view?usp=drive_link">Quiz 3 Submission</a>
+                    <a href="https://drive.google.com/file/d/1l2dkKS5m_eExIEzyie3mJr7Tg9SAIvoP/view?usp=drive_link">Quiz 3</a>
+                    <a href="https://drive.google.com/file/d/1qBRcqCxJNWaPqFsYmA97dbgMkFq_oln8/view?usp=drive_link">Quiz 4 Submission</a>
+                    <a href="https://drive.google.com/file/d/1ZPzddjCeYiC5zYme7nJftEXDYyUhez5M/view?usp=drive_link">Quiz 4</a>
+                    <a href="https://drive.google.com/file/d/1hWe_aASGZRFcJEb6vzYk2H4K9dAmA1Mo/view?usp=drive_link">Quiz 5 Submission</a>
+                    <a href="https://drive.google.com/file/d/1ECcnywKd2MwnA998PNhyPlY2jkDOO9xB/view?usp=drive_link">Quiz 5</a>
+                    <a href="https://drive.google.com/file/d/1ihl6igA_WigiXetbH9cwcOufyfEEFNGl/view?usp=drive_link">Quiz 6 Submission</a>
+                    <a href="https://drive.google.com/file/d/12vh8Ydo2z8r9hub7nlE5Z8UDbbwUOCdk/view?usp=drive_link">Quiz 6</a>
+                    <a href="https://drive.google.com/file/d/1i4uGsTxNavDkNA9XcVZajKwpmH24SsaH/view?usp=drive_link">Quiz 7 Submission</a>
+                    <a href="https://drive.google.com/file/d/1LRa_cQlYC4fedFN09sGKuPXyS5aAvJ-F/view?usp=drive_link">Quiz 7</a>
+                    <a href="https://drive.google.com/file/d/1nDOfmF8vCbvAgPcVu9bUptOLsrzGjurg/view?usp=drive_link">Reminor Q1</a>
+                    <a href="https://drive.google.com/file/d/1BM7_LkzLpkSjOY8Jb9G_Vs0D9wAozuqo/view?usp=drive_link">Reminor Q2</a>
+                    <a href="https://drive.google.com/file/d/1GipHt6O0ZmhBspROZs-CMybN57Z24HWC/view?usp=drive_link">Solution 1 Minor</a>
+                    <a href="https://drive.google.com/file/d/1woSsC2lsT2oMtJbaKw0RU8wbAKgCa2er/view?usp=drive_link">Solution 2 Minor</a>
+
+                </div>
+            </div>
+            <div class="dropdown outer">
+                <div class="dropdown-header">MISCLLANEOUS YEAR LECTURE SLIDE</div>
+                <div class="dropdown-content">
+                    <a href="https://drive.google.com/file/d/1haVf60Qy00l6zavyajPGka9XNvGLVyTN/view?usp=drive_link">Slides 1</a>
+                    <a href="https://drive.google.com/file/d/1S0zt-_eNnZnN1-mslC6kTDmJ-9yCD08C/view?usp=drive_link">Slides 2</a>
+                    <a href="https://drive.google.com/file/d/1RllneupXBq1CiC1XrkEgBYOLa51vJOC8/view?usp=drive_link">Slides 3</a>
+                    <a href="https://drive.google.com/file/d/1u0OA790ahCzE1pq8k4cdGvWIaBAiCjJ3/view?usp=drive_link">Slides 4</a>
+                    <a href="https://drive.google.com/file/d/1WaBOFUcGuQCgIbX52O0zrWHfbFw9kXcb/view?usp=drive_link">Slides 5</a>
+                    <a href="https://drive.google.com/file/d/1i0xOC0x7k8rHXjnN7K9buASymOVHIEHa/view?usp=drive_link">Slides 6</a>
+
+                    
+                    
+                </div>
+            </div>
+            <div class="dropdown outer">
+                <div class="dropdown-header">BOOKS</div>
+                <div class="dropdown-content">
+                    <a href="https://drive.google.com/file/d/1tuo2yvOJRyCt8RxY8LHLLxH33nyDeyzV/view?usp=drive_link">Engineering Drawing ND Bhatt</a>
+                    <a href="https://drive.google.com/file/d/1S66qf6npQRLkvc2gVaCQD6xvPzqk_PCV/view?usp=drive_link">Fundamentals of ED and CAD Dr. Parvez</a>
+
+
+                </div>
+            </div>
+            <div class="dropdown outer">
+                <div class="dropdown-header">NPTL Assignment</div>
+                <div class="dropdown-content">
+                    <a href="https://drive.google.com/file/d/1cslHlqUenFLalHjtDdoQJIa2NYEt2CxJ/view?usp=drive_link">Assignment Week 2</a>
+                    <a href="https://drive.google.com/file/d/1ZDW7oqK5_DpnpNaAe4voXc0tyQhBEMs7/view?usp=drive_link">Assignment Week 3</a>
+                    <a href="https://drive.google.com/file/d/119xr33EgbwUEhiZWuQkOOtvJwCgdI36y/view?usp=drive_link">Assignment Week 4</a>
+                    <a href="https://drive.google.com/file/d/1igAJtrQW2do9qBrpkQ0VzxiKSqxTxynY/view?usp=drive_link">Assignment Week 5</a>
+                    <a href="https://drive.google.com/file/d/16e3FWY5mDcsWMjGDvlfAeCdp5MWd0qiy/view?usp=drive_link">Assignment Week 6</a>
+                    <a href="https://drive.google.com/file/d/1jFcHUq79tjrDArsXFq1m-WlYGGHw8Lop/view?usp=drive_link">Assignment Week 7</a>
+                    <a href="https://drive.google.com/file/d/1wtn-OT_ivvQW4-uo918og9Jf8XLVNLLr/view?usp=drive_link">Assignment Week 8</a>
+                    <a href="https://drive.google.com/file/d/1BNifxDSOk-Y4t-IMHKHlpUwg_fL7unhC/view?usp=drive_link">Assignment Week 9</a>
+                    <a href="https://drive.google.com/file/d/1do2HjooD4i15qbxkFZ1pwbfHQrsLPhgC/view?usp=drive_link">Assignment Week 10</a>
+                    <a href="https://drive.google.com/file/d/1VPL92Pe3iSzks4rds2io_FrRL_TM5Jln/view?usp=drive_link">Assignment Week 11</a>
+                    <a href="https://drive.google.com/file/d/1mDTLeein4_IJxzIVi2alZXYicFcfoNZn/view?usp=drive_link">Assignment Week 12</a>
+
+                    
+                </div>
+            </div> 
+            
+
+
+            
+            
+            
+            
+        </div>
+        <footer>
+            <p>&copy; ALL RIGHTS RESERVED</p>
+            <p><a href="mailto:monilsavaliya416@gmail.com" style="color: white;">Contact for changes</a></p>
+        </footer>
+    </div>
+</body>
+</html>
